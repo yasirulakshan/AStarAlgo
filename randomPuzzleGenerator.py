@@ -1,6 +1,15 @@
 import random
 from copy import deepcopy
-from main import findDash
+
+
+def findDash(arr):
+    length = len(arr)
+    dashed = []
+    for i in range(length):
+        for j in range(length):
+            if arr[i][j] == "-":
+                dashed.append([i, j])
+    return dashed
 
 
 def move_left(puzzle, blank_location):
