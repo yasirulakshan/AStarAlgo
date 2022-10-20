@@ -49,14 +49,64 @@ def findDash(arr):
     return dashed
 
 
+def findH(arr, final):
+    h = findManhattan(arr, final)
+    # h = findMisplaced(arr, final)
+    return h
+
+
+def move(matrix):
+    arr = matrix.values
+    g = matrix.g
+    moved = matrix.lastMoved
+    dash = findDash(arr)
+    lastIndex = len(arr) - 1
+    posibleMatrixes = []
+
+    for i in range(len(dash)):
+        if dash[i][0] - 1 >= 0 and [dash[i][0] - 1, dash[i][1]] != moved and arr[dash[i][0] - 1][dash[i][1]] != "-":
+            tempArr = copy.deepcopy(arr)
+            tempArr[dash[i][0]][dash[i][1]] = tempArr[dash[i][0] - 1][dash[i][1]]
+            tempArr[dash[i][0] - 1][dash[i][1]] = "-"
+            posibleMatrixes.append(
+                Matrix(tempArr, g + 1, findH(tempArr, endMatrix), dash[i], [tempArr[dash[i][0]][dash[i][1]], "Down"]))
+
+        if dash[i][1] - 1 >= 0 and [dash[i][0], dash[i][1] - 1] != moved and arr[dash[i][0]][dash[i][1] - 1] != "-":
+            tempArr = copy.deepcopy(arr)
+            tempArr[dash[i][0]][dash[i][1]] = tempArr[dash[i][0]][dash[i][1] - 1]
+            tempArr[dash[i][0]][dash[i][1] - 1] = "-"
+            posibleMatrixes.append(Matrix(tempArr, g + 1, findH(tempArr, endMatrix), dash[i], [tempArr[dash[i][0]][dash[i][1]], "Right"]))
+
+        if dash[i][0] + 1 <= lastIndex and [dash[i][0] + 1, dash[i][1]] != moved and arr[dash[i][0] + 1][
+            dash[i][1]] != "-":
+            tempArr = copy.deepcopy(arr)
+            tempArr[dash[i][0]][dash[i][1]] = tempArr[dash[i][0] + 1][dash[i][1]]
+            tempArr[dash[i][0] + 1][dash[i][1]] = "-"
+            posibleMatrixes.append(Matrix(tempArr, g + 1, findH(tempArr, endMatrix), dash[i], [tempArr[dash[i][0]][dash[i][1]], "Up"]))
+
+        if dash[i][1] + 1 <= lastIndex and [dash[i][0], dash[i][1] + 1] != moved and arr[dash[i][0]][
+            dash[i][1] + 1] != "-":
+            tempArr = copy.deepcopy(arr)
+            tempArr[dash[i][0]][dash[i][1]] = tempArr[dash[i][0]][dash[i][1] + 1]
+            tempArr[dash[i][0]][dash[i][1] + 1] = "-"
+            posibleMatrixes.append(Matrix(tempArr, g + 1, findH(tempArr, endMatrix), dash[i], [tempArr[dash[i][0]][dash[i][1]], "Left"]))
+
+    return posibleMatrixes
+
+
 for fileName in range(1):
     startMatrix = fileToMatrix(open("./start/" + str(fileName) + ".txt", "r"))
     endMatrix = fileToMatrix(open("./end/" + str(fileName) + ".txt", "r"))
 
-    h = findManhattan(startMatrix, endMatrix)
-    # h = findMisplaced(startMatrix,endMatrix)
+    h = findH(startMatrix, endMatrix)
 
     stack = [Matrix(startMatrix, 0, h)]
     finalized = []
 
-    print(findDash(stack[0].values))
+    posibleMoves = move(stack[0])
+
+    for m in posibleMoves:
+        print(m.movement)
+        print(m.g)
+        print(m.h)
+        print(m.f)
