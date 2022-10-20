@@ -125,6 +125,7 @@ def findMinMatrixes(matrixes):
 outputs = []
 times = []
 steps = []
+f = open("outputManhattan.txt", "a")
 
 for fileName in range(100):
     startMatrix = fileToMatrix(open("./start/" + str(fileName) + ".txt", "r"))
@@ -154,8 +155,14 @@ for fileName in range(100):
         out.append(final.movement)
         final = final.parent
 
-    print(out)
     print(fileName)
+
+    for line in out:
+        f.write("(" + str(line[0]) + "," + line[1] + ")")
+        if line == out[len(out) - 1]:
+            f.write("\n")
+        else:
+            f.write(", ")
 
     et = time.time()
 
