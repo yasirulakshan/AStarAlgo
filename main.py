@@ -1,5 +1,7 @@
 import copy
+import statistics
 import sys
+import time
 
 from matrix import Matrix
 
@@ -51,8 +53,8 @@ def findDash(arr):
 
 
 def findH(arr, final):
-    # h = findManhattan(arr, final)
-    h = findMisplaced(arr, final)
+    h = findManhattan(arr, final)
+    # h = findMisplaced(arr, final)
     return h
 
 
@@ -121,10 +123,14 @@ def findMinMatrixes(matrixes):
 
 
 outputs = []
+times = []
+steps = []
 
 for fileName in range(100):
     startMatrix = fileToMatrix(open("./start/" + str(fileName) + ".txt", "r"))
     endMatrix = fileToMatrix(open("./end/" + str(fileName) + ".txt", "r"))
+
+    st = time.time()
 
     h = findH(startMatrix, endMatrix)
 
@@ -142,15 +148,24 @@ for fileName in range(100):
                 stack += move(matrix)
 
     out = []
-
+    step = 0
     while final.parent:
+        step += 1
         out.append(final.movement)
         final = final.parent
 
     print(out)
+    print(fileName)
+
+    et = time.time()
+
+    times.append(et - st)
+    steps.append(step)
 
     outputs.append(out.reverse())
 
+print("Time :", sum(times))
+print("Steps :", sum(steps))
 
-for out in outputs:
-    print(" ".join(out))
+print(statistics.mean(times))
+print(statistics.mean(steps))
