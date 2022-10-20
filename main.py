@@ -6,9 +6,9 @@ from matrix import Matrix
 
 def fileToMatrix(file):
     arr = []
-    lines = file.read().split("\n")
+    lines = file.read().strip().split("\n")
     for line in lines:
-        arr.append(line.split())
+        arr.append(line.strip().split())
     return arr
 
 
@@ -51,8 +51,8 @@ def findDash(arr):
 
 
 def findH(arr, final):
-    h = findManhattan(arr, final)
-    # h = findMisplaced(arr, final)
+    # h = findManhattan(arr, final)
+    h = findMisplaced(arr, final)
     return h
 
 
@@ -70,14 +70,16 @@ def move(matrix):
             tempArr[dash[i][0]][dash[i][1]] = tempArr[dash[i][0] - 1][dash[i][1]]
             tempArr[dash[i][0] - 1][dash[i][1]] = "-"
             posibleMatrixes.append(
-                Matrix(tempArr, g + 1, findH(tempArr, endMatrix), matrix, dash[i],  [tempArr[dash[i][0]][dash[i][1]], "Down"]))
+                Matrix(tempArr, g + 1, findH(tempArr, endMatrix), matrix, dash[i],
+                       [tempArr[dash[i][0]][dash[i][1]], "Down"]))
 
         if dash[i][1] - 1 >= 0 and [dash[i][0], dash[i][1] - 1] != moved and arr[dash[i][0]][dash[i][1] - 1] != "-":
             tempArr = copy.deepcopy(arr)
             tempArr[dash[i][0]][dash[i][1]] = tempArr[dash[i][0]][dash[i][1] - 1]
             tempArr[dash[i][0]][dash[i][1] - 1] = "-"
             posibleMatrixes.append(
-                Matrix(tempArr, g + 1, findH(tempArr, endMatrix), matrix, dash[i], [tempArr[dash[i][0]][dash[i][1]], "Right"]))
+                Matrix(tempArr, g + 1, findH(tempArr, endMatrix), matrix, dash[i],
+                       [tempArr[dash[i][0]][dash[i][1]], "Right"]))
 
         if dash[i][0] + 1 <= lastIndex and [dash[i][0] + 1, dash[i][1]] != moved and arr[dash[i][0] + 1][
             dash[i][1]] != "-":
@@ -85,7 +87,8 @@ def move(matrix):
             tempArr[dash[i][0]][dash[i][1]] = tempArr[dash[i][0] + 1][dash[i][1]]
             tempArr[dash[i][0] + 1][dash[i][1]] = "-"
             posibleMatrixes.append(
-                Matrix(tempArr, g + 1, findH(tempArr, endMatrix), matrix, dash[i],  [tempArr[dash[i][0]][dash[i][1]], "Up"]))
+                Matrix(tempArr, g + 1, findH(tempArr, endMatrix), matrix, dash[i],
+                       [tempArr[dash[i][0]][dash[i][1]], "Up"]))
 
         if dash[i][1] + 1 <= lastIndex and [dash[i][0], dash[i][1] + 1] != moved and arr[dash[i][0]][
             dash[i][1] + 1] != "-":
@@ -93,7 +96,8 @@ def move(matrix):
             tempArr[dash[i][0]][dash[i][1]] = tempArr[dash[i][0]][dash[i][1] + 1]
             tempArr[dash[i][0]][dash[i][1] + 1] = "-"
             posibleMatrixes.append(
-                Matrix(tempArr, g + 1, findH(tempArr, endMatrix), matrix, dash[i], [tempArr[dash[i][0]][dash[i][1]], "Left"]))
+                Matrix(tempArr, g + 1, findH(tempArr, endMatrix), matrix, dash[i],
+                       [tempArr[dash[i][0]][dash[i][1]], "Left"]))
 
     return posibleMatrixes
 
@@ -116,6 +120,8 @@ def findMinMatrixes(matrixes):
     return result, ifFinalized
 
 
+outputs = []
+
 for fileName in range(100):
     startMatrix = fileToMatrix(open("./start/" + str(fileName) + ".txt", "r"))
     endMatrix = fileToMatrix(open("./end/" + str(fileName) + ".txt", "r"))
@@ -135,6 +141,16 @@ for fileName in range(100):
                 stack.remove(matrix)
                 stack += move(matrix)
 
+    out = []
+
     while final.parent:
-        print(final.movement)
+        out.append(final.movement)
         final = final.parent
+
+    print(out)
+
+    outputs.append(out.reverse())
+
+
+for out in outputs:
+    print(" ".join(out))
